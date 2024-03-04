@@ -1,22 +1,30 @@
 import asyncio
+import traceback
 
-from logger import logger
+from .record import Record, upsert_records
+from .logger import logger
+from . import config
+from .db import init_db
 
 
-async def main(port):
+async def main():
+    await init_db()
     server = await asyncio.start_server(
         client_connected_cb=on_accept,
         host="0.0.0.0",
-        port=port,
-        reuse_address=True
+        port=config.port,
+        reuse_address=True,
     )
     async with server:
         await server.serve_forever()
-        
-        
+
+
 async def on_accept(reader, writer):
+    logger.debug("Got connection")
     while True:
         message = await reader.readline()
+        if message == b"":
+            break
         try:
             message = message.decode().strip()
         except UnicodeDecodeError:
@@ -27,18 +35,15 @@ async def on_accept(reader, writer):
             try:
                 await handle_message(message)
             except Exception as e:
-                logger.error(f"{e}")
-                
-                
+                logger.exception(e)
+
+
 async def handle_message(message: str):
     records: list[Record] = Record.parse(message)
     if len(records) > 0:
+        logger.debug(f"Upserting {len(records)} records")
         await upsert_records(records)
-    
-        
-        
+
+
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Finish")
-    parser.add_argument("--port", type=int, default=10000)
-    args = parser.parse_args()
-    asyncio.run(main(args.port))
+    asyncio.run(main())
