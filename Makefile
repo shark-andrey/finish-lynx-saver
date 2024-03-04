@@ -17,6 +17,7 @@ run:
 		--name $(PROJECT_NAME) \
 		--network host \
 		--env-file .env \
+		--restart=unless-stopped \
 		$(IMAGE_NAME)
 	
 stop:
