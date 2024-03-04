@@ -76,5 +76,5 @@ async def upsert_records(records: list[Record]):
 
 UPSERT_QUERY = f"""
 replace into {config.table_name} (event_number, round_number, heat_number, place, athlete_id, lane, time, react_time, wind, photo_file_name)
-values (:event_number, :round_number, :heat_number, :place, :athlete_id, :lane, :time, :react_time, :wind)
+values (:event_number, :round_number, :heat_number, :place, :athlete_id, :lane, :time, :react_time, :wind, :photo_file_name)
 """
