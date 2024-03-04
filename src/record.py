@@ -47,11 +47,23 @@ class Record(typing.NamedTuple):
             int(fields[3]) if fields[3] else None,
             int(fields[4]),
             int(fields[5]) if fields[5] else None,
-            Decimal(fields[6]) if fields[6] else None,
-            Decimal(fields[7]) if fields[7] else None,
+            _parse_time(fields[6]) if fields[6] else None,
+            _parse_time(fields[7]) if fields[7] else None,
             fields[8] if fields[8] else None,
             fields[9] if fields[9] else None,
         )
+        
+def _parse_time(s):
+    parts = s.split(":")
+    if len(parts) == 1:
+        return Decimal(parts[0])
+    elif len(parts) == 2:
+        return Decimal(int(parts[0]) * 60) + Decimal(parts[1])
+    elif len(parts) == 3:
+        return Decimal(int(parts[0]) * 3600) + Decimal(int(parts[1]) * 60) + Decimal(parts[2])
+    else:
+        raise ValueError(f"Invalid time format: {s}")
+
 
 
 async def upsert_records(records: list[Record]):
@@ -64,5 +76,5 @@ async def upsert_records(records: list[Record]):
 
 UPSERT_QUERY = f"""
 replace into {config.table_name} (event_number, round_number, heat_number, place, athlete_id, lane, time, react_time, wind, photo_file_name)
-values (:event_number, :round_number, :heat_number, :place, :athlete_id, :lane, :time, :react_time, :wind, :photo_file_name)
+values (:event_number, :round_number, :heat_number, :place, :athlete_id, :lane, :time, :react_time, :wind)
 """
