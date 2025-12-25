@@ -15,7 +15,7 @@ class Record(typing.NamedTuple):
     event_number: int
     round_number: int
     heat_number: int
-    place: str | None
+    place: int | None
     athlete_id: int
     lane: int | None
     time: Decimal | None
@@ -45,7 +45,7 @@ class Record(typing.NamedTuple):
             int(fields[0]),
             int(fields[1]),
             int(fields[2]),
-            fields[3]) if fields[3] else None,
+            int(fields[3]) if fields[3] else None,
             int(fields[4]),
             int(fields[5]) if fields[5] else None,
             _parse_time(fields[6]) if fields[6] else None,
