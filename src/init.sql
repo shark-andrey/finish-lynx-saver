@@ -2,7 +2,7 @@ create table if not exists TABLE_NAME (
     event_number int not null,
     round_number int not null,
     heat_number int not null,
-    place int,
+    place varchar(255),
     athlete_id int not null,
     lane int,
     time decimal(7, 2),
