@@ -4,7 +4,7 @@ create table if not exists TABLE_NAME (
     heat_number int not null,
     place int,
     athlete_id int not null,
-    lane int,
+    lane varchar(255),
     time decimal(7, 2),
     react_time decimal(7, 2),
     wind varchar(255),
